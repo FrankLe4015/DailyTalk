@@ -1,13 +1,13 @@
 body {
   margin: 0;
-  background: #111;
+  background: #000;
   color: #eee;
   font-family: "Noto Sans", sans-serif;
 }
 
 .app {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 340px 1fr;
   height: 100vh;
 }
 
@@ -18,42 +18,47 @@ aside {
   border-right: 1px solid #333;
 }
 
-aside h2, aside h3 { margin: 12px 0 8px; }
+.field { margin-bottom: 18px; }
 
-.field {
-  margin-bottom: 14px;
-}
-
-.field label {
-  display: block;
+label {
   font-size: 13px;
-  margin-bottom: 4px;
-  color: #bbb;
+  margin-bottom: 5px;
+  display: block;
+  color: #ccc;
 }
 
 input, textarea, select {
   width: 100%;
-  padding: 7px;
-  border-radius: 6px;
-  border: 1px solid #444;
+  padding: 6px;
+  margin-bottom: 6px;
   background: #000;
+  border: 1px solid #444;
+  border-radius: 6px;
   color: #fff;
 }
 
-button {
-  padding: 8px 10px;
-  margin-right: 6px;
-  margin-top: 8px;
-  border-radius: 6px;
-  border: 1px solid #444;
+.remote {
+  display: grid;
+  grid-template-columns: 40px 40px 40px;
+  grid-template-rows: 40px 40px;
+  gap: 4px;
+  justify-content: center;
+}
+
+.remote button {
   background: #222;
+  border: 1px solid #444;
   color: #fff;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 button.primary {
   background: #8b1515;
   border-color: #8b1515;
+  padding: 10px;
+  margin-top: 8px;
+  width: 100%;
 }
 
 main {
@@ -64,6 +69,8 @@ main {
 }
 
 canvas {
+  width: 95%;
+  height: auto;
+  max-width: 1000px;
   background: #333;
-  box-shadow: 0 0 10px #000;
 }
