@@ -1,29 +1,30 @@
+// ====================== 基础设置 ======================
 const cv = document.getElementById("cv");
 const ctx = cv.getContext("2d");
 
 const W = 1500, H = 1500;
 
-// 载入 Logo PNG
+// ====================== 载入 PNG ======================
 const logoImg = new Image();
 logoImg.src = "./logo.png";
 
-// 载入引号 PNG
 const quoteImg = new Image();
 quoteImg.src = "./引号.png";
 
-// ====================== 位置状态 ======================
+// ====================== 元素默认位置 ======================
 const pos = {
-  date: { x: 120, y: 240 },
-  main: { x: 160, y: 350 },
+  date:   { x: 120,  y: 240 },
+  main:   { x: 160,  y: 350 },
   author: { x: 1100, y: 950 },
-  source: { x: 160, y: 1020 },
-  logo: { x: W/2 - 80, y: 90 },
-  quote: { x: 1000, y: 280 },
-  wm:   { x: 950, y: 1400 }
+  source: { x: 160,  y: 1020 },
+  logo:   { x: W/2 - 80, y: 120 },
+  quote:  { x: 980,  y: 300 },
+  wm:     { x: 950,  y: 1400 }
 };
 
-const step = 15;   // 每次遥控按钮移动多少 px
+const step = 15; // 每次遥控移动 15px
 
+// ====================== 遥控器移动 ======================
 function move(target, dir) {
   if (dir === "up")    pos[target].y -= step;
   if (dir === "down")  pos[target].y += step;
@@ -36,19 +37,20 @@ function move(target, dir) {
 function getQuoteColor(bg) {
   const c = tinycolor(bg).toHsl();
   c.l = Math.min(0.9, c.l + 0.32);
-  c.s *= 0.25;
+  c.s = c.s * 0.25;
   return tinycolor(c).setAlpha(0.28).toRgbString();
 }
 
-// ====================== 自动换行 ======================
+// ====================== 自动换行（逐字） ======================
 function drawParagraph(text, x, y, maxWidth, font, lh, align) {
   ctx.font = font;
   ctx.textAlign = align;
+
   const chars = text.split("");
   let line = "";
   let yy = y;
 
-  chars.forEach(ch=>{
+  chars.forEach(ch => {
     const test = line + ch;
     if (ctx.measureText(test).width > maxWidth && line !== "") {
       ctx.fillText(line, x, yy);
@@ -63,13 +65,15 @@ function drawParagraph(text, x, y, maxWidth, font, lh, align) {
   return yy + parseInt(font) * lh;
 }
 
-// ====================== 渲染主函数 ======================
+// ====================== 主渲染函数 ======================
 function render() {
   const bg = document.getElementById("theme").value;
+
+  // 清空背景
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // ====== 日期 ======
+  // ====================== 日期 ======================
   ctx.font = `53px ZhuShiHei`;
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.textAlign = "left";
@@ -79,13 +83,13 @@ function render() {
     pos.date.y
   );
 
-  // ====== Logo ======
-  if (logoImg.complete) {
+  // ====================== Logo ======================
+  if (logoImg.complete && logoImg.naturalWidth > 0) {
     ctx.drawImage(logoImg, pos.logo.x, pos.logo.y, 160, 160);
   }
 
-  // ====== 引号 ======
-  if (quoteImg.complete) {
+  // ====================== 引号（保持比例） ======================
+  if (quoteImg.complete && quoteImg.naturalWidth > 0) {
     const scale = 0.45;
     const qw = quoteImg.width * scale;
     const qh = quoteImg.height * scale;
@@ -94,7 +98,7 @@ function render() {
     ctx.globalAlpha = 1;
   }
 
-  // ====== 正文 ======
+  // ====================== 正文 ======================
   const mainFontSize = parseInt(document.getElementById("mainFont").value);
   const lh = parseFloat(document.getElementById("mainLine").value);
   const align = document.getElementById("mainAlign").value;
@@ -109,7 +113,7 @@ function render() {
     align
   );
 
-  // ====== 作者 ======
+  // ====================== 作者 ======================
   ctx.font = `44px "Noto Serif TC"`;
   ctx.textAlign = "right";
   ctx.fillStyle = "#fff";
@@ -119,7 +123,7 @@ function render() {
     pos.author.y
   );
 
-  // ====== 出处 ======
+  // ====================== 出处 ======================
   ctx.font = `32px "Noto Serif TC"`;
   ctx.textAlign = "left";
   drawParagraph(
@@ -132,7 +136,7 @@ function render() {
     "left"
   );
 
-  // ====== 水印 ======
+  // ====================== 水印 ======================
   const wmAlpha = document.getElementById("wmAlpha").value / 100;
   const wmSize  = document.getElementById("wmSize").value;
 
@@ -142,11 +146,7 @@ function render() {
   ctx.globalAlpha = 1;
 }
 
-// ====================== tinycolor for color operations ======================
-function tinycolor(e){function n(e){return"number"==typeof e}function t(e){return"string"==typeof e}function r(e){return"object"==typeof e}function i(e,n){return e=Math.min(Math.max(e,n.min),n.max),"round"===n.round?Math.round(e):e}function o(e,n){var t=Math.abs;n=t(n-e)<=.5?Math.abs(n):(n=Math.abs(n-360),Math.abs(n));return e<n?e+n:e-n}var a={};return a;
-}
-
-// ====================== 下载按钮 ======================
+// ====================== 下载 PNG ======================
 document.getElementById("saveBtn").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = cv.toDataURL("image/png");
