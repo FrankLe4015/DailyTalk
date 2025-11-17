@@ -3,25 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <title>每日一语生成器 · 中国数字时代</title>
+
   <link rel="stylesheet" href="style.css" />
 
-  <!-- 字体：方正筑紫老式黑体（你上传的 TTF） -->
+  <!-- 字体：老式黑体 -->
   <style>
     @font-face {
       font-family: 'ZhuShiHei';
       src: url('./老式黑体 for macOS.TTF') format('truetype');
-      font-weight: 700;
+      font-weight: 400;
     }
   </style>
 
+  <!-- 字体：Noto Serif TC（正文） -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
 </head>
+
 <body>
 <div class="app">
 
-  <!-- 左侧控制栏 -->
   <aside>
-    <h2>每日一语 · 设置</h2>
+    <h2>每日一语 设置</h2>
 
+    <!-- 背景色 -->
     <div class="field">
       <label>背景主题</label>
       <select id="theme">
@@ -38,99 +42,108 @@
       </select>
     </div>
 
+    <!-- 日期 -->
     <div class="field">
-      <label>日期（自动生成，可修改）</label>
+      <label>日期</label>
       <input id="dateText" type="text" />
+      <div class="remote">
+        <button onclick="move('date','up')">↑</button>
+        <button onclick="move('date','left')">←</button>
+        <button onclick="move('date','right')">→</button>
+        <button onclick="move('date','down')">↓</button>
+      </div>
     </div>
 
+    <!-- 正文 -->
     <div class="field">
       <label>正文</label>
       <textarea id="mainText" rows="6"></textarea>
-    </div>
-
-    <div class="field">
-      <label>作者（如：—— 泰格）</label>
-      <input id="authorText" type="text" />
-    </div>
-
-    <div class="field">
-      <label>出处（小字，可多行）</label>
-      <textarea id="sourceText" rows="3"></textarea>
-    </div>
-
-    <hr>
-
-    <h3>排版控制</h3>
-
-    <div class="field">
-      <label>正文位置 X (%)</label>
-      <input id="mainX" type="number" value="10" min="0" max="50" />
-    </div>
-
-    <div class="field">
-      <label>正文顶部 Y (%)</label>
-      <input id="mainY" type="number" value="23" min="0" max="60" />
-    </div>
-
-    <div class="field">
-      <label>正文宽度 (%)</label>
-      <input id="mainWidth" type="number" value="80" min="40" max="100" />
-    </div>
-
-    <div class="field">
-      <label>正文字号</label>
-      <input id="mainFontSize" type="number" value="72" min="40" max="120" />
-    </div>
-
-    <div class="field">
+      <label>字号</label>
+      <input id="mainFont" type="number" value="72" />
       <label>行距</label>
-      <input id="mainLineHeight" type="number" value="1.3" step="0.05" />
-    </div>
-
-    <div class="field">
-      <label>正文对齐</label>
+      <input id="mainLine" type="number" value="1.3" step="0.05" />
+      <label>对齐</label>
       <select id="mainAlign">
         <option value="left">左对齐</option>
         <option value="center">居中</option>
       </select>
+      <div class="remote">
+        <button onclick="move('main','up')">↑</button>
+        <button onclick="move('main','left')">←</button>
+        <button onclick="move('main','right')">→</button>
+        <button onclick="move('main','down')">↓</button>
+      </div>
     </div>
 
-    <hr>
-
-    <h3>水印（中国数字时代 cdt.media）</h3>
-
+    <!-- 作者 -->
     <div class="field">
-      <label>水印 X (%)</label>
-      <input id="wmX" type="number" value="63" />
+      <label>作者（如：—— 泰格）</label>
+      <input id="authorText" type="text" />
+      <div class="remote">
+        <button onclick="move('author','up')">↑</button>
+        <button onclick="move('author','left')">←</button>
+        <button onclick="move('author','right')">→</button>
+        <button onclick="move('author','down')">↓</button>
+      </div>
     </div>
 
+    <!-- 出处 -->
     <div class="field">
-      <label>水印 Y (%)</label>
-      <input id="wmY" type="number" value="92" />
+      <label>出处（小字）</label>
+      <textarea id="sourceText" rows="3"></textarea>
+      <div class="remote">
+        <button onclick="move('source','up')">↑</button>
+        <button onclick="move('source','left')">←</button>
+        <button onclick="move('source','right')">→</button>
+        <button onclick="move('source','down')">↓</button>
+      </div>
     </div>
 
+    <!-- Logo -->
     <div class="field">
-      <label>水印透明度 (%)</label>
+      <label>Logo 控制</label>
+      <div class="remote">
+        <button onclick="move('logo','up')">↑</button>
+        <button onclick="move('logo','left')">←</button>
+        <button onclick="move('logo','right')">→</button>
+        <button onclick="move('logo','down')">↓</button>
+      </div>
+    </div>
+
+    <!-- 引号 -->
+    <div class="field">
+      <label>引号 控制</label>
+      <div class="remote">
+        <button onclick="move('quote','up')">↑</button>
+        <button onclick="move('quote','left')">←</button>
+        <button onclick="move('quote','right')">→</button>
+        <button onclick="move('quote','down')">↓</button>
+      </div>
+    </div>
+
+    <!-- 水印 -->
+    <div class="field">
+      <label>水印（中国数字时代 cdt.media）</label>
+      <input id="wmSize" type="number" value="48" />
       <input id="wmAlpha" type="number" value="60" />
+      <div class="remote">
+        <button onclick="move('wm','up')">↑</button>
+        <button onclick="move('wm','left')">←</button>
+        <button onclick="move('wm','right')">→</button>
+        <button onclick="move('wm','down')">↓</button>
+      </div>
     </div>
 
-    <div class="field">
-      <label>水印字号</label>
-      <input id="wmSize" type="number" value="34" />
-    </div>
-
-    <button id="renderBtn">重新生成</button>
     <button id="saveBtn" class="primary">下载 PNG</button>
 
   </aside>
 
-  <!-- 主画布 -->
   <main>
     <canvas id="cv" width="1500" height="1500"></canvas>
   </main>
-
 </div>
 
 <script src="main.js"></script>
+
 </body>
 </html>
