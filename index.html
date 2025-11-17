@@ -17,6 +17,10 @@
 
   <!-- 字体：Noto Serif TC（正文） -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+
+  <!-- ★ 引入 tinycolor（必须要有，否则 main.js 报错） -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.2/tinycolor.min.js"></script>
+
 </head>
 
 <body>
@@ -124,7 +128,9 @@
     <!-- 水印 -->
     <div class="field">
       <label>水印（中国数字时代 cdt.media）</label>
+      <label>字号</label>
       <input id="wmSize" type="number" value="48" />
+      <label>透明度（0-100）</label>
       <input id="wmAlpha" type="number" value="60" />
       <div class="remote">
         <button onclick="move('wm','up')">↑</button>
