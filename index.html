@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>每日一语生成器 · 中国数字时代</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- 字体：方正筑紫老式黑体（你上传的 TTF） -->
+  <style>
+    @font-face {
+      font-family: 'ZhuShiHei';
+      src: url('./老式黑体 for macOS.TTF') format('truetype');
+      font-weight: 700;
+    }
+  </style>
+
+</head>
+<body>
+<div class="app">
+
+  <!-- 左侧控制栏 -->
+  <aside>
+    <h2>每日一语 · 设置</h2>
+
+    <div class="field">
+      <label>背景主题</label>
+      <select id="theme">
+        <option value="#518db3">蓝色</option>
+        <option value="#466539">绿色</option>
+        <option value="#8b78b1">紫色</option>
+        <option value="#434343">黑灰</option>
+        <option value="#c1bfa2">浅灰</option>
+        <option value="#9e7257">棕色</option>
+        <option value="#ddc642">金黄</option>
+        <option value="#9e433f">红褐色</option>
+        <option value="#2e415f">海军蓝</option>
+        <option value="#cabaad">米灰</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>日期（自动生成，可修改）</label>
+      <input id="dateText" type="text" />
+    </div>
+
+    <div class="field">
+      <label>正文</label>
+      <textarea id="mainText" rows="6"></textarea>
+    </div>
+
+    <div class="field">
+      <label>作者（如：—— 泰格）</label>
+      <input id="authorText" type="text" />
+    </div>
+
+    <div class="field">
+      <label>出处（小字，可多行）</label>
+      <textarea id="sourceText" rows="3"></textarea>
+    </div>
+
+    <hr>
+
+    <h3>排版控制</h3>
+
+    <div class="field">
+      <label>正文位置 X (%)</label>
+      <input id="mainX" type="number" value="10" min="0" max="50" />
+    </div>
+
+    <div class="field">
+      <label>正文顶部 Y (%)</label>
+      <input id="mainY" type="number" value="23" min="0" max="60" />
+    </div>
+
+    <div class="field">
+      <label>正文宽度 (%)</label>
+      <input id="mainWidth" type="number" value="80" min="40" max="100" />
+    </div>
+
+    <div class="field">
+      <label>正文字号</label>
+      <input id="mainFontSize" type="number" value="72" min="40" max="120" />
+    </div>
+
+    <div class="field">
+      <label>行距</label>
+      <input id="mainLineHeight" type="number" value="1.3" step="0.05" />
+    </div>
+
+    <div class="field">
+      <label>正文对齐</label>
+      <select id="mainAlign">
+        <option value="left">左对齐</option>
+        <option value="center">居中</option>
+      </select>
+    </div>
+
+    <hr>
+
+    <h3>水印（中国数字时代 cdt.media）</h3>
+
+    <div class="field">
+      <label>水印 X (%)</label>
+      <input id="wmX" type="number" value="63" />
+    </div>
+
+    <div class="field">
+      <label>水印 Y (%)</label>
+      <input id="wmY" type="number" value="92" />
+    </div>
+
+    <div class="field">
+      <label>水印透明度 (%)</label>
+      <input id="wmAlpha" type="number" value="60" />
+    </div>
+
+    <div class="field">
+      <label>水印字号</label>
+      <input id="wmSize" type="number" value="34" />
+    </div>
+
+    <button id="renderBtn">重新生成</button>
+    <button id="saveBtn" class="primary">下载 PNG</button>
+
+  </aside>
+
+  <!-- 主画布 -->
+  <main>
+    <canvas id="cv" width="1500" height="1500"></canvas>
+  </main>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
