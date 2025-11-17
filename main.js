@@ -1,17 +1,38 @@
 const cv = document.getElementById("cv");
 const ctx = cv.getContext("2d");
 
-// 载入 Logo
+const W = 1500, H = 1500;
+
+// 载入 Logo PNG
 const logoImg = new Image();
 logoImg.src = "./logo.png";
 
-// 载入引号
+// 载入引号 PNG
 const quoteImg = new Image();
 quoteImg.src = "./引号.png";
 
-// ========== 工具函数 ==========
+// ====================== 位置状态 ======================
+const pos = {
+  date: { x: 120, y: 240 },
+  main: { x: 160, y: 350 },
+  author: { x: 1100, y: 950 },
+  source: { x: 160, y: 1020 },
+  logo: { x: W/2 - 80, y: 90 },
+  quote: { x: 1000, y: 280 },
+  wm:   { x: 950, y: 1400 }
+};
 
-// 自动生成引号颜色（基于背景 HSL 提亮 + 透明）
+const step = 15;   // 每次遥控按钮移动多少 px
+
+function move(target, dir) {
+  if (dir === "up")    pos[target].y -= step;
+  if (dir === "down")  pos[target].y += step;
+  if (dir === "left")  pos[target].x -= step;
+  if (dir === "right") pos[target].x += step;
+  render();
+}
+
+// ====================== 自动生成引号颜色 ======================
 function getQuoteColor(bg) {
   const c = tinycolor(bg).toHsl();
   c.l = Math.min(0.9, c.l + 0.32);
@@ -19,124 +40,123 @@ function getQuoteColor(bg) {
   return tinycolor(c).setAlpha(0.28).toRgbString();
 }
 
-// 自动换行
-function drawParagraph(text, x, y, maxWidth, fontSize, lineHeight, align="left") {
-  ctx.font = `700 ${fontSize}px ZhuShiHei`;
-  const words = text.split("");
+// ====================== 自动换行 ======================
+function drawParagraph(text, x, y, maxWidth, font, lh, align) {
+  ctx.font = font;
+  ctx.textAlign = align;
+  const chars = text.split("");
   let line = "";
   let yy = y;
 
-  for (let i = 0; i < words.length; i++) {
-    const test = line + words[i];
-    const w = ctx.measureText(test).width;
-    if (w > maxWidth && line !== "") {
-      ctx.textAlign = align;
+  chars.forEach(ch=>{
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line !== "") {
       ctx.fillText(line, x, yy);
-      line = words[i];
-      yy += fontSize * lineHeight;
+      yy += parseInt(font) * lh;
+      line = ch;
     } else {
       line = test;
     }
-  }
+  });
 
-  ctx.textAlign = align;
   ctx.fillText(line, x, yy);
-  return yy + fontSize * lineHeight;
+  return yy + parseInt(font) * lh;
 }
 
-// ========== 获取控件 ==========
-
-function el(id) { return document.getElementById(id); }
-
-// 初始化日期
-el("dateText").value = "每日一语 " + new Date().toISOString().slice(0,10).replace(/-/g,".");
-
+// ====================== 渲染主函数 ======================
 function render() {
-  const W = 1500, H = 1500;
-
-  // 读取设置
-  const bg = el("theme").value;
-  const dateText = el("dateText").value;
-  const mainText = el("mainText").value;
-  const authorText = el("authorText").value;
-  const sourceText = el("sourceText").value;
-
-  const mainX = (el("mainX").value / 100) * W;
-  const mainY = (el("mainY").value / 100) * H;
-  const mainWidth = (el("mainWidth").value / 100) * W;
-  const mainFontSize = parseInt(el("mainFontSize").value);
-  const mainLH = parseFloat(el("mainLineHeight").value);
-  const mainAlign = el("mainAlign").value;
-
-  const wmX = (el("wmX").value / 100) * W;
-  const wmY = (el("wmY").value / 100) * H;
-  const wmAlpha = el("wmAlpha").value / 100;
-  const wmSize = parseInt(el("wmSize").value);
-
-  // 背景
+  const bg = document.getElementById("theme").value;
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // Logo（固定在顶部居中）
-  if (logoImg.complete) {
-    ctx.drawImage(logoImg, W/2 - 60, 70, 120,120);
-  }
-
-  // 日期（左上角）
-  ctx.fillStyle = "rgba(255,255,255,0.55)";
-  ctx.font = `700 34px ZhuShiHei`;
-  ctx.fillText(dateText, 100, 250);
-
-  // 引号（右上）
-  if (quoteImg.complete) {
-    ctx.globalAlpha = 0.40;
-    ctx.drawImage(quoteImg, W - 420, 260, 320, 320);
-    ctx.globalAlpha = 1.0;
-  }
-
-  // 正文
-  ctx.fillStyle = "#ffffff";
-  let nextY = drawParagraph(mainText, mainX, mainY, mainWidth, mainFontSize, mainLH, mainAlign);
-
-  // 作者（右对齐）
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `700 48px ZhuShiHei`;
-  ctx.textAlign = "right";
-  ctx.fillText(authorText, W - 120, nextY + 40);
-
-  // 出处（左对齐）
-  ctx.font = `700 32px ZhuShiHei`;
+  // ====== 日期 ======
+  ctx.font = `53px ZhuShiHei`;
+  ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.textAlign = "left";
-  drawParagraph(sourceText, mainX, nextY + 100, mainWidth, 32, 1.3, "left");
+  ctx.fillText(
+    document.getElementById("dateText").value,
+    pos.date.x,
+    pos.date.y
+  );
 
-  // 水印
+  // ====== Logo ======
+  if (logoImg.complete) {
+    ctx.drawImage(logoImg, pos.logo.x, pos.logo.y, 160, 160);
+  }
+
+  // ====== 引号 ======
+  if (quoteImg.complete) {
+    const scale = 0.45;
+    const qw = quoteImg.width * scale;
+    const qh = quoteImg.height * scale;
+    ctx.globalAlpha = 0.3;
+    ctx.drawImage(quoteImg, pos.quote.x, pos.quote.y, qw, qh);
+    ctx.globalAlpha = 1;
+  }
+
+  // ====== 正文 ======
+  const mainFontSize = parseInt(document.getElementById("mainFont").value);
+  const lh = parseFloat(document.getElementById("mainLine").value);
+  const align = document.getElementById("mainAlign").value;
+
+  const nextY = drawParagraph(
+    document.getElementById("mainText").value,
+    pos.main.x,
+    pos.main.y,
+    1180,
+    `${mainFontSize}px "Noto Serif TC"`,
+    lh,
+    align
+  );
+
+  // ====== 作者 ======
+  ctx.font = `44px "Noto Serif TC"`;
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(
+    document.getElementById("authorText").value,
+    pos.author.x,
+    pos.author.y
+  );
+
+  // ====== 出处 ======
+  ctx.font = `32px "Noto Serif TC"`;
+  ctx.textAlign = "left";
+  drawParagraph(
+    document.getElementById("sourceText").value,
+    pos.source.x,
+    pos.source.y,
+    1180,
+    `32px "Noto Serif TC"`,
+    1.3,
+    "left"
+  );
+
+  // ====== 水印 ======
+  const wmAlpha = document.getElementById("wmAlpha").value / 100;
+  const wmSize  = document.getElementById("wmSize").value;
+
   ctx.globalAlpha = wmAlpha;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `700 ${wmSize}px ZhuShiHei`;
-  ctx.fillText("中国数字时代  cdt.media", wmX, wmY);
-  ctx.globalAlpha = 1.0;
+  ctx.font = `${wmSize}px ZhuShiHei`;
+  ctx.fillText("中国数字时代  cdt.media", pos.wm.x, pos.wm.y);
+  ctx.globalAlpha = 1;
 }
 
-
-// ========== 事件绑定 ==========
-["theme","dateText","mainText","authorText","sourceText",
- "mainX","mainY","mainWidth","mainFontSize","mainLineHeight","mainAlign",
- "wmX","wmY","wmAlpha","wmSize"].forEach(id=>{
-   el(id).addEventListener("input", render);
- });
-
-document.getElementById("renderBtn").addEventListener("click", render);
-
-document.getElementById("saveBtn").addEventListener("click", () => {
-  const link = document.createElement('a');
-  link.download = 'DailyTalk.png';
-  link.href = cv.toDataURL("image/png");
-  link.click();
-});
-
-// tinycolor（用于颜色计算）
-/*! tinycolor.js from https://github.com/bgrins/TinyColor */
+// ====================== tinycolor for color operations ======================
 function tinycolor(e){function n(e){return"number"==typeof e}function t(e){return"string"==typeof e}function r(e){return"object"==typeof e}function i(e,n){return e=Math.min(Math.max(e,n.min),n.max),"round"===n.round?Math.round(e):e}function o(e,n){var t=Math.abs;n=t(n-e)<=.5?Math.abs(n):(n=Math.abs(n-360),Math.abs(n));return e<n?e+n:e-n}var a={};return a;
 }
+
+// ====================== 下载按钮 ======================
+document.getElementById("saveBtn").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = cv.toDataURL("image/png");
+  a.download = "DailyTalk.png";
+  a.click();
+});
+
+// ====================== 初始化 ======================
+document.getElementById("dateText").value =
+  "每日一语 " +
+  new Date().toISOString().slice(0, 10).replace(/-/g, ".");
 
 render();
